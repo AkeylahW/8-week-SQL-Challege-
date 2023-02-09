@@ -51,20 +51,20 @@ INSERT INTO members
 VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
-  
+  --Question 1: What is the total amount each customer spent at the restaurant?
   select customer_id
   ,Format (sum(price), '$,##') as 'total spent'
   from menu 
   inner join sales 
   on menu.product_id = sales.product_id
   group by customer_id
-
+--Question 2: How many days has each customer visited the restaurant 
 select distinct customer_id 
 ,count (distinct order_date) as "DaysVisted "
 from sales 
 group by customer_id 
  
-
+--Question 3: What was the first item from the menu purchased by each customer 
  select distinct customer_id 
  ,menu.product_name
  ,order_date
@@ -74,7 +74,9 @@ group by customer_id
  group by customer_id
  ,menu.product_name
  ,order_date
---4
+--Question 4:What is the most purchased item on the menu and
+--how many times was it purchased by all customers? 
+
 SELECT count (sales.product_id) as 'TimesPurchased'
 ,menu.product_name
 from sales 
@@ -83,7 +85,7 @@ on menu.product_id = sales.product_id
 group by menu.product_name
 order by count (sales.product_id) desc 
 
---question 5
+--Question 5: Which item was the most popular for each customer?
 select  distinct customer_id 
 ,menu.product_name 
 ,count(sales.product_id) as 'PopularItemFrequency'
@@ -95,7 +97,7 @@ group by customer_id
 order by count(sales.product_id) desc 
 
 
---question 6
+--Question 6: Which item was purchased first by the customer after they became a memeber 
 
 With Rank as
 (
@@ -128,7 +130,7 @@ with rank as
 select * from rank 
 where rank = 1
 
---question 7
+--Question 7 Which item was purchased just before the customer became a member?
 with rank as 
 (
   SELECT sales.customer_id
@@ -146,7 +148,7 @@ select customer_id
 from rank 
 where rank = 1
 
---question 8 
+--Question 8 WHat is the total items and amount spent for each member before they became a member
 SELECT sales.customer_id
 ,count (sales.customer_id) as 'totalitems '
   , format (sum( menu.price), '$,##')  as 'total spent '
@@ -158,7 +160,8 @@ SELECT sales.customer_id
   where sales.order_date < members.join_date 
   group by sales.customer_id
   
-  -- question 9 
+  -- Question 9 f each $1 spent equates to 10 points and sushi has a 2x points multiplier - 
+  --how many points would each customer have?
 
 with points as 
 (
@@ -175,7 +178,8 @@ Join Points p
 on p.product_id = sales.product_id 
 group by sales.customer_id 
 
--- question 10 
+-- Question 10: In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - 
+--how many points do customer A and B have at the end of January?
 WITH dates_cte as 
 (
   select *,
